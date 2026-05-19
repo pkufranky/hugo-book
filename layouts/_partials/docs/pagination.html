@@ -10,10 +10,28 @@
   {{ if gt (len .Paginator.Pagers) 1 }}
   <span class="flex gap">
     {{- $currentPageNumber := .Paginator.PageNumber -}}
-    {{- range $pageIndex := (slice -2 -1 0 1 2) -}}
-    {{- with index $.Paginator.Pagers (add $currentPageNumber $pageIndex -1) -}}
-      <a {{if ne $currentPageNumber .PageNumber }}href="{{ .URL }}"{{end}}>{{ .PageNumber }}</a>
+    {{- $totalPages := .Paginator.TotalPages -}}
+    {{- $first := (add $currentPageNumber -2) -}}
+    {{- $last := (add $currentPageNumber 2) -}}
+
+    {{- if gt $first 1 -}}
+    <a href="{{ .Paginator.First.URL }}">1</a>
+      {{- if gt $first 2 -}}
+      ...
+      {{- end -}}
     {{- end -}}
+
+    {{- range $pageIndex := (slice -2 -1 0 1 2) -}}
+      {{- with index $.Paginator.Pagers (add $currentPageNumber $pageIndex -1) -}}
+        <a {{if ne $currentPageNumber .PageNumber }}href="{{ .URL }}"{{end}}>{{ .PageNumber }}</a>
+      {{- end -}}
+    {{- end -}}
+
+    {{- if gt $totalPages (add $last 1) -}}
+      ...
+    {{- end -}}
+    {{- if gt $totalPages $last -}}
+      <a href="{{ .Paginator.Last.URL }}">{{ $totalPages }}</a>
     {{- end -}}
   </span>
   {{ end }}
